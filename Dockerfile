@@ -1,8 +1,9 @@
 FROM php:alpine
 MAINTAINER Matthias Vogel <git@kanti.de>
 
-# @see FROM https://github.com/bravissimolabs/docker-alpine-git
-RUN apk --update add bash git openssh && \
+# add file for https://github.com/pluswerk/grumphp-bom-task
+# @see FROM https://github.com/alpine-docker/git
+RUN apk --update add file bash git openssh && \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 
