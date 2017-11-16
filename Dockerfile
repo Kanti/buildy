@@ -7,7 +7,7 @@ RUN apk --update add file bash git openssh libxml2-dev && \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 
-RUN docker-php-ext-install soap
+RUN docker-php-ext-install soap mysqli
 
 # @see FROM https://getcomposer.org/download/
 RUN cd /bin && \
