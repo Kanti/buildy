@@ -1,9 +1,11 @@
+docker build -t kanti/buildy .
+
+printf "\n\n"
+docker run --rm kanti/buildy rsync --version
+printf "\n\n"
 docker run --rm kanti/buildy php -v
+printf "\n\n"
 docker run --rm kanti/buildy composer --version
+printf "\n\n"
 docker run --rm kanti/buildy git --version
 
-#docker run --rm kanti/buildy node -v
-#docker run --rm kanti/buildy npm -v
-#docker run --rm kanti/buildy bower --version
-#docker run --rm kanti/buildy grunt --version
-#docker run --rm kanti/buildy gulp --version
