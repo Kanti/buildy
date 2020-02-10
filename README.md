@@ -1,9 +1,9 @@
-# buildy
-docker image with:
-- php
+# kanti/buildy
+small php docker image with:
 - git
 - composer
 - hirak/prestissimo
+- pcov
 
 
 ## Setting
