@@ -4,6 +4,7 @@ small php docker image with:
 - composer
 - hirak/prestissimo
 - pcov
+- imagemagick
 
 
 ## Setting

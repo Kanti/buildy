@@ -8,4 +8,6 @@ printf "\n\n"
 docker run --rm kanti/buildy composer --version
 printf "\n\n"
 docker run --rm kanti/buildy git --version
+printf "\n\n"
+docker run --rm kanti/buildy identify --version
 
