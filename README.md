@@ -5,6 +5,7 @@ small php docker image with:
 - hirak/prestissimo
 - pcov
 - imagemagick
+- gd
 
 
 ## Setting
