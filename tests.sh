@@ -7,6 +7,8 @@ docker run --rm kanti/buildy php -v
 printf "\n\n"
 docker run --rm kanti/buildy composer --version
 printf "\n\n"
+docker run --rm kanti/buildy composer1 --version
+printf "\n\n"
 docker run --rm kanti/buildy git --version
 printf "\n\n"
 docker run --rm kanti/buildy identify --version
