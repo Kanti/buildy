@@ -10,7 +10,7 @@ RUN apk --update add file bash rsync git openssh libxml2-dev patch imagemagick l
 
 # install ext-soap ext-mysqli ext-pcov
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN install-php-extensions pcov soap mysqli gd zip
+RUN install-php-extensions pcov soap mysqli gd zip @fix_letsencrypt
 
 # @see FROM https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q > installer && \
