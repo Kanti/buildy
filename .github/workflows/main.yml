@@ -17,6 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ]
+        include:
+          # includes a new variable of additionalTag
+          # for the matrix leg matching the php version
+          - php: '8.1'
+            additionalTag: kanti/buildy:latest,
     steps:
       -
         name: Set up QEMU
@@ -35,12 +40,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push ${{ matrix.php }}
-        id: docker_build
+        id: docker_build_latest
         uses: docker/build-push-action@v2
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
-          tags: kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}
-          build-args: FROM=php:${{ matrix.php }}-alpine
+          tags: ${{ matrix.additionalTag }}kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}
+          build-args: FROM=php:alpine
       -
         name: Image digest
         run: |
