@@ -16,6 +16,4 @@ RUN install-php-extensions pcov soap mysqli gd zip @fix_letsencrypt
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q > installer && \
     cat installer | php -- --filename="composer" --install-dir="/bin" && \
     cat installer | php -- --filename="composer1" --1 --install-dir="/bin" && \
-    rm installer && \
-    composer1 global require hirak/prestissimo && \
-    composer1 clear-cache
+    rm installer
