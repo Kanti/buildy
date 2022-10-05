@@ -2,6 +2,8 @@ ARG FROM=php:alpine
 FROM $FROM
 MAINTAINER Matthias Vogel <git@kanti.de>
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 # add file for https://github.com/pluswerk/grumphp-bom-task
 # @see FROM https://github.com/alpine-docker/git
 RUN apk --update add file bash jq rsync git openssh libxml2-dev patch imagemagick libpng-dev unzip && \
