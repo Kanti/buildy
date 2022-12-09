@@ -20,7 +20,7 @@ jobs:
         include:
           # includes a new variable of additionalTag
           # for the matrix leg matching the php version
-          - php: '8.1'
+          - php: '8.2'
             additionalTag: kanti/buildy:latest,
     steps:
       -
