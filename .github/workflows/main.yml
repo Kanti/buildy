@@ -47,7 +47,7 @@ jobs:
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: ${{ matrix.additionalTag }}kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}
-          build-args: FROM=php:${{ matrix.php }}-alpine
+          build-args: PHP=${{ matrix.php }}
           platforms: linux/amd64,linux/arm64
       -
         name: Image digest

@@ -1,8 +1,9 @@
-ARG FROM=php:alpine
-FROM $FROM
-MAINTAINER Matthias Vogel <git@kanti.de>
+ARG PHP=8.4
+FROM php:${PHP}-alpine
+ARG PHP=8.4
 
-ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    PHP_MAIN_VERSION=${PHP}
 
 # add file for https://github.com/pluswerk/grumphp-bom-task
 # @see FROM https://github.com/alpine-docker/git
