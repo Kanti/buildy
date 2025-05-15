@@ -7,7 +7,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
 
 # add file for https://github.com/pluswerk/grumphp-bom-task
 # @see FROM https://github.com/alpine-docker/git
-RUN apk --update add file bash jq rsync git openssh libxml2-dev patch imagemagick libpng-dev unzip docker-cli && \
+RUN apk --update add file bash jq rsync git openssh libxml2-dev patch imagemagick libpng-dev unzip docker-cli docker-cli-compose && \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 
