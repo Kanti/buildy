@@ -17,12 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
+        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5-rc' ]
         include:
-          # includes a new variable of additionalTag
-          # for the matrix leg matching the php version
+          # includes new variables for specific matrix legs
           - php: '8.4'
             additionalTag: kanti/buildy:latest,
+          - php: '8.5-rc'
+            # provide a cleaned php version to be used in tags (no -rc)
+            cleanPhp: '8.5'
     steps:
       -
         name: Set up QEMU
@@ -46,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
-          tags: ${{ matrix.additionalTag }}kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}
+          tags: ${{ matrix.additionalTag }}kanti/buildy:${{ matrix.cleanPhp || matrix.php }},kanti/buildy:${{ matrix.cleanPhp || matrix.php }}-${{ steps.date.outputs.date }}
           build-args: PHP=${{ matrix.php }}
           platforms: linux/amd64,linux/arm64
       -
