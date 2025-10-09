@@ -21,7 +21,7 @@ jobs:
         include:
           # includes new variables for specific matrix legs
           - php: '8.4'
-            additionalTag: kanti/buildy:latest,
+            additionalTag: ',kanti/buildy:latest'
           - php: '8.5-rc'
             # provide a cleaned php version to be used in tags (no -rc)
             cleanPhp: '8.5'
@@ -34,7 +34,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
       -
         if: github.ref == 'refs/heads/master'
         name: Login to DockerHub
@@ -48,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
-          tags: ${{ matrix.additionalTag }}kanti/buildy:${{ matrix.cleanPhp || matrix.php }},kanti/buildy:${{ matrix.cleanPhp || matrix.php }}-${{ steps.date.outputs.date }}
+          tags: kanti/buildy:${{ matrix.cleanPhp || matrix.php }},kanti/buildy:${{ matrix.cleanPhp || matrix.php }}-${{ steps.date.outputs.date }}${{ matrix.additionalTag }}
           build-args: PHP=${{ matrix.php }}
           platforms: linux/amd64,linux/arm64
       -
