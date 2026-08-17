@@ -17,14 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5-rc' ]
+        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6-rc' ]
         include:
           # includes new variables for specific matrix legs
           - php: '8.4'
             additionalTag: ',kanti/buildy:latest'
-          - php: '8.5-rc'
+          - php: '8.6-rc'
             # provide a cleaned php version to be used in tags (no -rc)
-            cleanPhp: '8.5'
+            cleanPhp: '8.6'
     steps:
       -
         name: Set up QEMU
