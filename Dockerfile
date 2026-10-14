@@ -11,9 +11,9 @@ RUN apk --update add file bash jq rsync git openssh libxml2-dev patch imagemagic
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 
-# install ext-soap ext-mysqli ext-pcov
+# install ext-soap ext-mysqli ext-pdo_mysql ext-pdo_sqlite ext-pcov
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions pcov soap mysqli gd zip calendar intl @fix_letsencrypt && \
+RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions pcov soap mysqli pdo_mysql pdo_sqlite gd zip calendar intl @fix_letsencrypt && \
     echo 'memory_limit=-1' > /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 
 # @see FROM https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md

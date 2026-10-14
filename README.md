@@ -7,3 +7,5 @@ small php docker image with:
 - pcov
 - imagemagick
 - gd
+- pdo_mysql
+- pdo_sqlite
