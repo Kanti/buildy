@@ -17,14 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
+        php: [ '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6' ]
         include:
           # includes new variables for specific matrix legs
           - php: '8.4'
             additionalTag: ',kanti/buildy:latest'
-#          - php: '8.6-rc'
-            # provide a cleaned php version to be used in tags (no -rc)
-#            cleanPhp: '8.6'
+          # build from php:8.6-rc-alpine until php:8.6-alpine is released, then switch automatically
+          - php: '8.6'
+            rc: true
     steps:
       -
         name: Set up QEMU
@@ -43,13 +43,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        if: matrix.rc
+        name: Use release candidate until ${{ matrix.php }} is released
+        id: rc
+        run: |
+          status=$(curl -s --retry 3 -o /dev/null -w '%{http_code}' https://hub.docker.com/v2/namespaces/library/repositories/php/tags/${{ matrix.php }}-alpine)
+          case "$status" in
+            200) echo "php=${{ matrix.php }}" >> "$GITHUB_OUTPUT" ;;
+            404) echo "php=${{ matrix.php }}-rc" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::Docker Hub returned HTTP $status for php:${{ matrix.php }}-alpine"; exit 1 ;;
+          esac
+      -
         name: Build and push ${{ matrix.php }}
         id: docker_build_latest
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
-          tags: kanti/buildy:${{ matrix.cleanPhp || matrix.php }},kanti/buildy:${{ matrix.cleanPhp || matrix.php }}-${{ steps.date.outputs.date }}${{ matrix.additionalTag }}
-          build-args: PHP=${{ matrix.php }}
+          tags: kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}${{ matrix.additionalTag }}
+          build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
           platforms: linux/amd64,linux/arm64
       -
         name: Image digest
