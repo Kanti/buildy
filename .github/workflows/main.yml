@@ -113,3 +113,17 @@ jobs:
           tags: kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}${{ matrix.additionalTag }}
           build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
           platforms: linux/amd64,linux/arm64
+
+  dockerhub-description:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      -
+        name: Sync README.md to Docker Hub
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: kanti/buildy
+          short-description: 'Small PHP Docker image (Alpine) for CI builds: composer, pcov, git, imagemagick and docker cli'
