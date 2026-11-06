@@ -12,6 +12,8 @@ docker run --rm -v "$PWD":/app -w /app kanti/buildy:8.5 composer install
 
 Rebuilt daily, also tagged as `<version>-YYYY-MM-DD`. `8.6` is built from the release candidate until PHP 8.6 is released.
 
+Older tags (`7.3` – `8.1`) still exist but are no longer updated.
+
 ## Included
 
 - **PHP extensions:** pcov, gd, pdo_mysql, pdo_sqlite, mysqli, soap, zip, intl, calendar
