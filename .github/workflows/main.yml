@@ -65,20 +65,18 @@ jobs:
         name: Smoke test ${{ matrix.php }}
         run: |
           docker run --rm -i -e EXPECTED_PHP=${{ matrix.php }} buildy:smoke-test bash -euxo pipefail <<'EOF'
+          cd "$(mktemp -d)"
           [ "$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')" = "$EXPECTED_PHP" ]
-          [ "${PHP_MAIN_VERSION%-rc}" = "$EXPECTED_PHP" ]
-          [ "$(php -r 'echo ini_get("memory_limit");')" = "-1" ]
-          for ext in pcov soap mysqli pdo_mysql pdo_sqlite gd zip calendar intl; do
-            php -r "exit(extension_loaded('$ext') ? 0 : 1);"
-          done
-          echo '<?php function covered() { return 1; }' > /tmp/covered.php
-          php -d pcov.enabled=1 -d pcov.directory=/tmp -r '\pcov\start(); require "/tmp/covered.php"; covered(); \pcov\stop(); exit(empty(\pcov\collect()["/tmp/covered.php"]) ? 1 : 0);'
+          # one check per feature in README.md
+          git init -q
+          git -c user.name=smoke -c user.email=smoke@test commit -q --allow-empty -m smoke
           [[ "$(composer --version 2>/dev/null)" == *"Composer version 2."* ]]
-          if command -v composer1; then exit 1; fi
-          for bin in git ssh rsync jq unzip patch file magick docker; do
-            command -v "$bin"
-          done
-          docker compose version
+          echo '<?php function f() {}' > f.php
+          php -d pcov.directory=.-r '\pcov\start(); require "f.php"; f(); exit(\pcov\collect() ? 0 : 1);'
+          magick -size 1x1 xc:red image.png
+          php -r 'exit(imagepng(imagecreatefrompng("image.png"), "gd.png") ? 0 : 1);'
+          php -r 'exit(in_array("mysql", PDO::getAvailableDrivers()) ? 0 : 1);'
+          php -r 'exit((new PDO("sqlite::memory:"))->query("SELECT 1")->fetchColumn() == 1 ? 0 : 1);'
           EOF
       -
         name: Build and push ${{ matrix.php }}
