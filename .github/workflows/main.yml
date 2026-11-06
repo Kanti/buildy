@@ -72,7 +72,7 @@ jobs:
           git -c user.name=smoke -c user.email=smoke@test commit -q --allow-empty -m smoke
           [[ "$(composer --version 2>/dev/null)" == *"Composer version 2."* ]]
           echo '<?php function f() {}' > f.php
-          php -d pcov.directory=.-r '\pcov\start(); require "f.php"; f(); exit(\pcov\collect() ? 0 : 1);'
+          php -d pcov.directory=. -r '\pcov\start(); require "f.php"; f(); exit(\pcov\collect() ? 0 : 1);'
           magick -size 1x1 xc:red image.png
           php -r 'exit(imagepng(imagecreatefrompng("image.png"), "gd.png") ? 0 : 1);'
           php -r 'exit(in_array("mysql", PDO::getAvailableDrivers()) ? 0 : 1);'
