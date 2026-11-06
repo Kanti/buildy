@@ -67,16 +67,32 @@ jobs:
           docker run --rm -i -e EXPECTED_PHP=${{ matrix.php }} buildy:smoke-test bash -euxo pipefail <<'EOF'
           cd "$(mktemp -d)"
           [ "$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')" = "$EXPECTED_PHP" ]
-          # one check per feature in README.md
+          # one check per entry in README.md
+          # php extensions
+          echo '<?php function f() {}' > f.php
+          php -d pcov.directory=. -r '\pcov\start(); require "f.php"; f(); exit(\pcov\collect() ? 0 : 1);'
+          php -r 'exit(imagepng(imagecreatetruecolor(1, 1), "image.png") ? 0 : 1);'
+          php -r 'exit(in_array("mysql", PDO::getAvailableDrivers()) ? 0 : 1);'
+          php -r 'exit((new PDO("sqlite::memory:"))->query("SELECT 1")->fetchColumn() == 1 ? 0 : 1);'
+          php -r 'exit(mysqli_init() ? 0 : 1);'
+          php -r 'new SoapClient(null, ["location" => "http://localhost", "uri" => "urn:smoke"]);'
+          php -r '$zip = new ZipArchive(); $zip->open("a.zip", ZipArchive::CREATE); $zip->addFromString("a.txt", "a"); exit($zip->close() ? 0 : 1);'
+          php -r 'exit((new NumberFormatter("en_US", NumberFormatter::DECIMAL))->format(1234.5) === "1,234.5" ? 0 : 1);'
+          php -r 'exit(cal_days_in_month(CAL_GREGORIAN, 2, 2024) === 29 ? 0 : 1);'
+          # tools
           git init -q
           git -c user.name=smoke -c user.email=smoke@test commit -q --allow-empty -m smoke
           [[ "$(composer --version 2>/dev/null)" == *"Composer version 2."* ]]
-          echo '<?php function f() {}' > f.php
-          php -d pcov.directory=. -r '\pcov\start(); require "f.php"; f(); exit(\pcov\collect() ? 0 : 1);'
-          magick -size 1x1 xc:red image.png
-          php -r 'exit(imagepng(imagecreatefrompng("image.png"), "gd.png") ? 0 : 1);'
-          php -r 'exit(in_array("mysql", PDO::getAvailableDrivers()) ? 0 : 1);'
-          php -r 'exit((new PDO("sqlite::memory:"))->query("SELECT 1")->fetchColumn() == 1 ? 0 : 1);'
+          [ "$(magick identify -format '%wx%h' image.png)" = "1x1" ]
+          docker --version
+          docker compose version
+          echo '{"a": 1}' | jq -e '.a == 1'
+          rsync -a f.php copy.php
+          ssh -V
+          [ "$(unzip -p a.zip a.txt)" = "a" ]
+          patch --version
+          [[ "$(file -b image.png)" == PNG* ]]
+          [ "$(php -r 'echo ini_get("memory_limit");')" = "-1" ]
           EOF
       -
         name: Build and push ${{ matrix.php }}
