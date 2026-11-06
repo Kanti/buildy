@@ -54,17 +54,25 @@ jobs:
             *) echo "::error::Docker Hub returned HTTP $status for php:${{ matrix.php }}-alpine"; exit 1 ;;
           esac
       -
-        name: Build ${{ matrix.php }} for smoke test
+        name: Build ${{ matrix.php }} for smoke test (amd64)
         uses: docker/build-push-action@v6
         with:
           load: true
-          tags: buildy:smoke-test
+          tags: buildy:smoke-test-amd64
           build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
           platforms: linux/amd64
       -
+        name: Build ${{ matrix.php }} for smoke test (arm64)
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: buildy:smoke-test-arm64
+          build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
+          platforms: linux/arm64
+      -
         name: Smoke test ${{ matrix.php }}
         run: |
-          docker run --rm -i -e EXPECTED_PHP=${{ matrix.php }} buildy:smoke-test bash -euxo pipefail <<'EOF'
+          cat > "$RUNNER_TEMP/smoke-test.sh" <<'EOF'
           cd "$(mktemp -d)"
           [ "$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')" = "$EXPECTED_PHP" ]
           # one check per entry in README.md
@@ -94,17 +102,14 @@ jobs:
           [[ "$(file -b image.png)" == PNG* ]]
           [ "$(php -r 'echo ini_get("memory_limit");')" = "-1" ]
           EOF
+          for arch in amd64 arm64; do
+            docker run --rm -i --platform linux/$arch -e EXPECTED_PHP=${{ matrix.php }} buildy:smoke-test-$arch bash -euxo pipefail < "$RUNNER_TEMP/smoke-test.sh"
+          done
       -
         name: Build and push ${{ matrix.php }}
-        id: docker_build_latest
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: kanti/buildy:${{ matrix.php }},kanti/buildy:${{ matrix.php }}-${{ steps.date.outputs.date }}${{ matrix.additionalTag }}
           build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
           platforms: linux/amd64,linux/arm64
-      -
-        name: Image digest
-        run: |
-          echo ${{ steps.docker_build.outputs.digest }}
-          echo ${{ steps.docker_build_dev.outputs.digest }}
