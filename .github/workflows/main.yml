@@ -54,6 +54,33 @@ jobs:
             *) echo "::error::Docker Hub returned HTTP $status for php:${{ matrix.php }}-alpine"; exit 1 ;;
           esac
       -
+        name: Build ${{ matrix.php }} for smoke test
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: buildy:smoke-test
+          build-args: PHP=${{ steps.rc.outputs.php || matrix.php }}
+          platforms: linux/amd64
+      -
+        name: Smoke test ${{ matrix.php }}
+        run: |
+          docker run --rm -i -e EXPECTED_PHP=${{ matrix.php }} buildy:smoke-test bash -euxo pipefail <<'EOF'
+          [ "$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')" = "$EXPECTED_PHP" ]
+          [ "${PHP_MAIN_VERSION%-rc}" = "$EXPECTED_PHP" ]
+          [ "$(php -r 'echo ini_get("memory_limit");')" = "-1" ]
+          for ext in pcov soap mysqli pdo_mysql pdo_sqlite gd zip calendar intl; do
+            php -r "exit(extension_loaded('$ext') ? 0 : 1);"
+          done
+          echo '<?php function covered() { return 1; }' > /tmp/covered.php
+          php -d pcov.enabled=1 -d pcov.directory=/tmp -r '\pcov\start(); require "/tmp/covered.php"; covered(); \pcov\stop(); exit(empty(\pcov\collect()["/tmp/covered.php"]) ? 1 : 0);'
+          [[ "$(composer --version 2>/dev/null)" == *"Composer version 2."* ]]
+          if command -v composer1; then exit 1; fi
+          for bin in git ssh rsync jq unzip patch file magick docker; do
+            command -v "$bin"
+          done
+          docker compose version
+          EOF
+      -
         name: Build and push ${{ matrix.php }}
         id: docker_build_latest
         uses: docker/build-push-action@v6
