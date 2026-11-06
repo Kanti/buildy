@@ -29,5 +29,4 @@ RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions pcov soap mysqli pdo_mysql pdo_s
 # @see FROM https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q > installer && \
     cat installer | php -- --filename="composer" --install-dir="/bin" && \
-    cat installer | php -- --filename="composer1" --1 --install-dir="/bin" && \
     rm installer
