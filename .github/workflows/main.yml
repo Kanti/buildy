@@ -20,7 +20,7 @@ jobs:
         php: [ '8.2', '8.3', '8.4', '8.5', '8.6' ]
         include:
           # includes new variables for specific matrix legs
-          - php: '8.4'
+          - php: '8.5'
             additionalTag: ',kanti/buildy:latest'
           # build from php:8.6-rc-alpine until php:8.6-alpine is released, then switch automatically
           - php: '8.6'
