@@ -21,9 +21,10 @@ RUN if [ "${PHP%-rc}" = "8.6" ]; then \
         rm -r /tmp/pcov; \
     fi
 
-# install ext-soap ext-mysqli ext-pdo_mysql ext-pdo_sqlite ext-pcov
+# install ext-soap ext-mysqli ext-pdo_mysql ext-pdo_sqlite ext-pcov ext-mbstring
+# php:8.6-alpine no longer ships ext-mbstring, older images already have it built in
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions pcov soap mysqli pdo_mysql pdo_sqlite gd zip calendar intl @fix_letsencrypt && \
+RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions pcov soap mysqli pdo_mysql pdo_sqlite gd zip calendar intl mbstring @fix_letsencrypt && \
     echo 'memory_limit=-1' > /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 
 # @see FROM https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md

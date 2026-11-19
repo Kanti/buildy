@@ -16,7 +16,7 @@ Older tags (`7.3` – `8.1`) still exist but are no longer updated.
 
 ## Included
 
-- **PHP extensions:** pcov, gd, pdo_mysql, pdo_sqlite, mysqli, soap, zip, intl, calendar
+- **PHP extensions:** pcov, gd, pdo_mysql, pdo_sqlite, mysqli, soap, zip, intl, calendar, mbstring
 - **Tools:** git, composer 2, imagemagick, docker cli + compose, bash, jq, rsync, openssh, unzip, patch, file
 - `memory_limit=-1`
 
