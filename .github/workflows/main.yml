@@ -87,6 +87,7 @@ jobs:
           php -r '$zip = new ZipArchive(); $zip->open("a.zip", ZipArchive::CREATE); $zip->addFromString("a.txt", "a"); exit($zip->close() ? 0 : 1);'
           php -r 'exit((new NumberFormatter("en_US", NumberFormatter::DECIMAL))->format(1234.5) === "1,234.5" ? 0 : 1);'
           php -r 'exit(cal_days_in_month(CAL_GREGORIAN, 2, 2024) === 29 ? 0 : 1);'
+          php -r 'exit(mb_strlen("äöü") === 3 ? 0 : 1);'
           # tools
           git init -q
           git -c user.name=smoke -c user.email=smoke@test commit -q --allow-empty -m smoke
